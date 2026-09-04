@@ -1,0 +1,18 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import api from '../lib/api';
+import { Card, StatusBadge, ScoreBadge, Button, EmptyState, LoadingSpinner } from '../components/UI';
+import { formatDate, formatINR } from '../lib/utils';
+import { ClipboardList, MapPin, Upload } from 'lucide-react';
+export default function CrewDashboard() {
+  const [wos, setWos] = useState([]); const [loading, setLoading] = useState(true);
+  useEffect(() => { load(); }, []);
+  async function load() { try { const res = await api.get('/workorders'); setWos(res.data.data); } catch (e) { console.error(e); } setLoading(false); }
+  if (loading) return <LoadingSpinner />;
+  return (<div className="p-8 max-w-6xl mx-auto"><h1 className="text-2xl font-bold text-slate-800 mb-1">My Work Orders</h1><p className="text-sm text-slate-500 mb-6">Assigned repair tasks</p>{wos.length === 0 ? <EmptyState icon={ClipboardList} title="No assigned work orders" /> : <div className="grid gap-4">{wos.map(wo => <WorkOrderCard key={wo.id} wo={wo} onUpdate={load} />)}</div>}</div>);
+}
+function WorkOrderCard({ wo, onUpdate }) {
+  const [showSubmit, setShowSubmit] = useState(false); const [photoUrl, setPhotoUrl] = useState('https://picsum.photos/seed/repaired/800/600'); const [notes, setNotes] = useState(''); const [submitting, setSubmitting] = useState(false);
+  async function handleSubmitRepair() { setSubmitting(true); try { await api.post(`/workorders/${wo.id}/submit-repair`, { after_photo_url: photoUrl, notes }); setShowSubmit(false); onUpdate(); } catch (e) { console.error(e); } setSubmitting(false); }
+  return (<Card><div className="flex items-start justify-between mb-3"><div><div className="flex items-center gap-2 mb-1"><span className="font-mono text-xs text-slate-400">{wo.id}</span><StatusBadge status={wo.status} /><ScoreBadge score={wo.urgency_score} /></div><h3 className="font-medium text-slate-800">{wo.location.address}</h3><div className="flex items-center gap-3 mt-1 text-xs text-slate-400"><span className="flex items-center gap-1"><MapPin size={10} />{wo.location.gps.lat.toFixed(3)},{wo.location.gps.lng.toFixed(3)}</span><span>{formatINR(wo.cost_estimate)}</span><span>SLA: {formatDate(wo.sla_deadline)}</span></div></div><img src={wo.evidence_image_url} alt="" className="w-24 h-24 rounded-lg object-cover" /></div>{wo.rejection_reason && <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700"><strong>Rejected:</strong> {wo.rejection_reason}</div>}{wo.status === 'assigned_to_crew' && !showSubmit && <Button onClick={() => setShowSubmit(true)}><Upload size={14} className="inline mr-1" />Submit Repair</Button>}{showSubmit && <div className="mt-4 p-4 bg-slate-50 rounded-lg space-y-3"><h4 className="font-medium text-slate-700">Submit After-Repair Photo</h4><img src={photoUrl} alt="" className="w-32 h-32 rounded-lg object-cover" /><textarea value={notes} onChange={e=>setNotes(e.target.value)} rows={2} placeholder="Notes (optional)" className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm" /><div className="flex gap-2"><Button onClick={handleSubmitRepair} disabled={submitting} variant="success">{submitting ? 'Submitting...' : 'Confirm'}</Button><Button onClick={() => setShowSubmit(false)} variant="outline">Cancel</Button></div></div>}{wo.status === 'crew_submitted' && <div className="p-3 bg-cyan-50 border border-cyan-200 rounded-lg text-sm text-cyan-700">Repair submitted — awaiting review.</div>}{wo.status === 'verified' && <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">✓ Verified.</div>}</Card>);
+}

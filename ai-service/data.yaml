@@ -1,0 +1,7 @@
+# YOLOv8 Dataset Config for SentriRoad
+path: ./dataset
+train: images/train
+val: images/val
+names:
+  0: pothole
+  1: crack

@@ -1,0 +1,6 @@
+[
+  { "id": "d_1001", "report_id": "r_1001", "damage_type": "pothole", "confidence": 0.91, "bounding_box": [0.32, 0.51, 0.22, 0.15], "evidence_image_url": "https://picsum.photos/seed/pothole1/800/600", "frame_timestamp_seconds": null, "created_at": "2026-08-10T07:32:00Z" },
+  { "id": "d_1002", "report_id": "r_1002", "damage_type": "crack", "confidence": 0.78, "bounding_box": [0.10, 0.40, 0.55, 0.08], "evidence_image_url": "https://picsum.photos/seed/pothole2/800/600", "frame_timestamp_seconds": null, "created_at": "2026-08-20T14:07:00Z" },
+  { "id": "d_1003", "report_id": "r_1003", "damage_type": "pothole", "confidence": 0.86, "bounding_box": [0.44, 0.60, 0.18, 0.14], "evidence_image_url": "https://picsum.photos/seed/pothole3/800/600", "frame_timestamp_seconds": null, "created_at": "2026-08-24T11:22:00Z" },
+  { "id": "d_1004", "report_id": "r_1004", "damage_type": "pothole", "confidence": 0.69, "bounding_box": [0.20, 0.35, 0.15, 0.12], "evidence_image_url": "https://picsum.photos/seed/pothole4/800/600", "frame_timestamp_seconds": null, "created_at": "2026-08-27T06:47:00Z" }
+]
